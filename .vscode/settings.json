@@ -23,7 +23,7 @@
     {
       "splitTerminals": [
         {
-          "name": "project-root:blank",
+          "name": "root",
           // "commands": ["pnpm docker:reset"],
           "shouldRunCommands": false
         }
@@ -34,6 +34,11 @@
         {
           "name": "docker-compose",
           "commands": ["docker-compose down && docker-compose build && docker-compose up"],
+          "shouldRunCommands": false,
+        },
+				{
+          "name": "root",
+          "commands": ["nest g resource"],
           "shouldRunCommands": false,
         }
       ]
