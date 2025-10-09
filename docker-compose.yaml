@@ -1,0 +1,15 @@
+services:
+  nextjs-webapp:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    # volumes:
+      # NOTE: Uncomment for local dev?
+      # - .:/app
+      # - /app/node_modules
+    # working_dir: /app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    
