@@ -1,3 +1,20 @@
+## Pulling from Template
+
+One-time setup:
+```bash
+git remote add template git@github.com:pdxsoftwarestudio/nestjs-api.git
+
+git fetch --all
+```
+
+Pull latest changes from template:
+```bash
+git fetch --all
+
+git merge template/main --allow-unrelated-histories
+```
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
