@@ -1,0 +1,56 @@
+{
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#812317",
+    "activityBar.background": "#812317",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#188725",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#812317",
+    "statusBar.background": "#56170f",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#812317",
+    "statusBarItem.remoteBackground": "#56170f",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#56170f",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#56170f99",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#56170f",
+  "restoreTerminals.terminals": [
+    {
+      "splitTerminals": [
+        {
+          "name": "root",
+          // "commands": ["pnpm docker:reset"],
+          "shouldRunCommands": false
+        }
+      ]
+    },
+		{
+      "splitTerminals": [
+        {
+          "name": "docker-compose",
+          "commands": ["docker-compose down && docker-compose build && docker-compose up"],
+          "shouldRunCommands": false,
+        },
+				{
+          "name": "root",
+          "commands": ["nest g resource"],
+          "shouldRunCommands": false,
+        }
+      ]
+    },
+		{
+      "splitTerminals": [
+        {
+          "name": "start",
+          "commands": ["npm run start"],
+          "shouldRunCommands": false,
+        }
+      ]
+    }
+  ]
+}
