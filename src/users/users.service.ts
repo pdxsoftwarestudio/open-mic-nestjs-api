@@ -1,49 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
-import { mockUserIdFactory, mockUserList } from './users.mocks';
 
 @Injectable()
 export class UsersService {
-  create(createUserInput: CreateUserInput) {
-    const mockUserId = mockUserIdFactory();
+  constructor(
+    @Inject('USER_REPOSITORY')
+    private userRepository: Repository<User>,
+  ) {}
 
-    const newUser: User = {
-      id: mockUserId,
-      firstName: createUserInput.firstName,
-      lastName: createUserInput.lastName,
-    };
-
-    mockUserList.push(newUser);
-
-    return newUser;
+  async create(createUserInput: CreateUserInput) {
+    return this.userRepository.save(createUserInput);
   }
 
-  findAll() {
-    return mockUserList;
+  async findAll() {
+    return this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return mockUserList.find((user) => user.id === id);
+  async findOne(id: number) {
+    return this.userRepository.findOneBy({ id });
   }
 
-  update(id: number, updateUserInput: UpdateUserInput): User {
-    const user = mockUserList.find((user) => user.id === id);
-
-    user.firstName = updateUserInput.firstName ?? user.firstName;
-    user.lastName = updateUserInput.lastName ?? user.lastName;
-
-    return user;
+  async update(id: number, updateUserInput: UpdateUserInput) {
+    return this.userRepository.save({
+      id,
+      ...updateUserInput,
+    });
   }
 
-  remove(id: number): boolean {
-    const indexToRemove = mockUserList.findIndex((user) => user.id === id);
+  async remove(id: number): Promise<boolean> {
+    const result = await this.userRepository.delete(id);
 
-    if (indexToRemove !== -1) {
-      mockUserList.splice(indexToRemove, 1);
-    }
-
-    return indexToRemove !== -1;
+    return result.affected > 0;
   }
 }

@@ -1,8 +1,23 @@
 services:
+  postgres:
+    image: postgres:16-alpine # Or another preferred version like postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: test
+    ports:
+      - "5432:5432" # Maps host port 5432 to container port 5432
+    volumes:
+      - postgresData:/var/lib/postgresql/data # Persist data in a named volume
+    networks:
+      - default
   nestjs-api:
     build: 
       context: .
       dockerfile: Dockerfile
+    depends_on:
+      - postgres
     # volumes:
       # NOTE: Uncomment for local dev?
       # - .:/app
@@ -12,4 +27,13 @@ services:
       - "8080:8080"
     environment:
       - NODE_ENV=development
-    
+    networks:
+      - default
+
+
+volumes:
+  postgresData: # Define the named volume
+
+networks:
+  default:
+    driver: bridge
