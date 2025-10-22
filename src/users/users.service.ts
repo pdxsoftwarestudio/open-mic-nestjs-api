@@ -19,8 +19,12 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  async findOne(id: number) {
+  async findById(id: number) {
     return this.userRepository.findOneBy({ id });
+  }
+
+  async findByEmail(email: string) {
+    return this.userRepository.findOneBy({ email });
   }
 
   async update(id: number, updateUserInput: UpdateUserInput) {

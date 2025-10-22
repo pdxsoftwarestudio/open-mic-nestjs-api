@@ -9,13 +9,12 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => String, { description: 'First name of user.' })
-  @Column()
-  firstName: string;
+  @Field(() => String, { nullable: false, description: 'Email of user.' })
+  @Column({ unique: true })
+  email: string;
 
-  @Field(() => String, { description: 'Last name of user.' })
   @Column()
-  lastName: string;
+  hashedPassword: string;
 
   @Field(() => [Event], { description: 'Events created by the user.' })
   @OneToMany(() => Event, (event) => event.creator)

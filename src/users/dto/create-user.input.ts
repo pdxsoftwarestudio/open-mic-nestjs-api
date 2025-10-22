@@ -2,13 +2,10 @@ import { Field, InputType, PickType } from '@nestjs/graphql';
 import { User } from '../entities/user.entity';
 
 @InputType()
-export class CreateUserInput extends PickType(User, [
-  'firstName',
-  'lastName',
-] as const) {
-  @Field(() => String, { description: 'First name of user.' })
-  firstName: string;
+export class CreateUserInput extends PickType(User, ['email'] as const) {
+  @Field(() => String, { description: 'Email of user.' })
+  email: string;
 
-  @Field(() => String, { description: 'Last name of user.' })
-  lastName: string;
+  @Field(() => String, { description: 'Hashed password of user.' })
+  hashedPassword: string;
 }

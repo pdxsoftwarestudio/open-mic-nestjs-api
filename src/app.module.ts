@@ -3,9 +3,10 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { EventsModule } from './events/events.module';
+import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
+import { EventsModule } from './events/events.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { DatabaseModule } from './database/database.module';
     UsersModule,
     EventsModule,
     DatabaseModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

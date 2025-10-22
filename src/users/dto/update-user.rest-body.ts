@@ -1,12 +1,15 @@
-import { Field, InputType, OmitType, PartialType } from '@nestjs/graphql';
+import { Field, ID, InputType } from '@nestjs/graphql';
+import { PickType } from '@nestjs/mapped-types';
 import { User } from '../entities/user.entity';
 
 @InputType()
-export class UpdateUserRestBody extends OmitType(PartialType(User), ['id']) {
-  // HACK: unsure why we need to redeclare these fields, but we do
-  @Field(() => String, { description: 'First name of user.' })
-  firstName: string;
+export class UpdateUserRestBody extends PickType(User, [
+  'id',
+  'email',
+] as const) {
+  @Field(() => ID, { description: 'Unique identifier for the user.' })
+  id: number;
 
-  @Field(() => String, { description: 'Last name of user.' })
-  lastName: string;
+  @Field(() => String, { description: 'Email of user.' })
+  email: string;
 }
