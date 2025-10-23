@@ -24,7 +24,7 @@ export class EventsController {
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Event | null> {
-    return this.eventsService.findOne(id);
+    return this.eventsService.findOne({ where: { id }, select: { id: true } });
   }
 
   @Post()
