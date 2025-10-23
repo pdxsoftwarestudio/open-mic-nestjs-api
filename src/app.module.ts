@@ -14,6 +14,7 @@ import { UsersModule } from './users/users.module';
       driver: ApolloDriver,
       graphiql: true,
       autoSchemaFile: true,
+      context: ({ req, res }) => ({ req, res }),
     }),
     UsersModule,
     EventsModule,

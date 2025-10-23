@@ -9,18 +9,23 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './auth.guard';
+import { LocalAuthGuard } from './local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: { email: string; password: string }) {
-    console.debug('AuthController.signIn called with', signInDto);
+  signIn(@Request() req) {
+    return req.user;
+  }
 
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  @UseGuards(LocalAuthGuard)
+  @Post('logout')
+  async logout(@Request() req) {
+    return req.logout();
   }
 
   @HttpCode(HttpStatus.OK)
@@ -29,7 +34,7 @@ export class AuthController {
     return this.authService.register(registerDto.email, registerDto.password);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(LocalAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return req.user;

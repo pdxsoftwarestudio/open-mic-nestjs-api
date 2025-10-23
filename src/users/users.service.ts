@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
@@ -19,8 +19,8 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  async findById(id: number) {
-    return this.userRepository.findOneBy({ id });
+  async findOne(options: FindOneOptions<User>) {
+    return this.userRepository.findOne(options);
   }
 
   async findByEmail(email: string) {
