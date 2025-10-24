@@ -1,10 +1,19 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Mutation,
+  Query,
+  ResolveField,
+  Resolver,
+  Root,
+} from '@nestjs/graphql';
 import { GqlJwtAuthGuard } from 'src/auth/gql-jwt-auth.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.param-decorator';
 import { User } from 'src/users/entities/user.entity';
 import { Event } from './entities/event.entity';
 import { EventsService } from './events.service';
+import { Participant } from 'src/participants/entities/participant.entity';
 
 @Resolver(() => Event)
 export class EventsResolver {
@@ -13,6 +22,24 @@ export class EventsResolver {
   @Query(() => [Event], { name: 'events' })
   events() {
     return this.eventsService.findAll();
+  }
+
+  @Query(() => Event, { name: 'event' })
+  async event(
+    @Args('eventId', { type: () => Int }) eventId: number,
+  ): Promise<Event> {
+    console.debug('eventId', eventId);
+
+    return this.eventsService.findOne({
+      where: { id: eventId },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        date: true,
+        location: true,
+      },
+    });
   }
 
   @Mutation(() => Event)
@@ -81,5 +108,19 @@ export class EventsResolver {
     event.date = date;
 
     return this.eventsService.update(id, event);
+  }
+
+  @ResolveField(() => String)
+  @UseGuards(GqlJwtAuthGuard)
+  async participants(@Root() event: Event): Promise<Participant[]> {
+    const eventWithParticipants = await this.eventsService.findOne({
+      where: { id: event.id },
+      select: { id: true },
+      relations: ['participants'],
+    });
+
+    console.debug('eventWithParticipants: ', await eventWithParticipants);
+
+    return (await eventWithParticipants).participants;
   }
 }
