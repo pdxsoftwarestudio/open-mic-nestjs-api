@@ -1,6 +1,8 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CreateEventInput } from './dto/create-event.input';
-import { UpdateEventInput } from './dto/update-event.input';
+import { GqlJwtAuthGuard } from 'src/auth/gql-jwt-auth.guard';
+import { CurrentUser } from 'src/users/decorators/current-user.param-decorator';
+import { User } from 'src/users/entities/user.entity';
 import { Event } from './entities/event.entity';
 import { EventsService } from './events.service';
 
@@ -9,30 +11,75 @@ export class EventsResolver {
   constructor(private readonly eventsService: EventsService) {}
 
   @Query(() => [Event], { name: 'events' })
-  findAll() {
+  events() {
     return this.eventsService.findAll();
   }
 
-  @Query(() => Event, { name: 'event', nullable: true })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.eventsService.findOne(id);
-  }
-
   @Mutation(() => Event)
-  createEvent(@Args('createEventInput') createEventInput: CreateEventInput) {
-    return this.eventsService.create(createEventInput);
-  }
+  @UseGuards(GqlJwtAuthGuard)
+  async createEvent(
+    @Args('title') title: string,
+    @Args('description') description: string,
+    @CurrentUser() user: User,
+  ): Promise<Event> {
+    const newEvent = new Event();
+    newEvent.title = title;
+    newEvent.description = description;
 
-  @Mutation(() => Event, { nullable: true })
-  updateEvent(
-    @Args('id', { type: () => Int }) id: number,
-    @Args('updateEventInput') updateEventInput: UpdateEventInput,
-  ) {
-    return this.eventsService.update(id, updateEventInput);
+    this.eventsService.create({
+      title,
+      description,
+      location: 'TBD',
+      date: new Date().toISOString(),
+      creatorId: user.id,
+    });
+
+    return newEvent;
   }
 
   @Mutation(() => Boolean)
-  removeEvent(@Args('id', { type: () => Int }) id: number) {
-    return this.eventsService.remove(id);
+  @UseGuards(GqlJwtAuthGuard)
+  async deleteEvent(
+    @Args('eventId', { type: () => Int }) eventId: number,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    const event = await this.eventsService.findOne({
+      where: { id: eventId },
+      select: { id: true },
+      relations: { creator: true },
+    });
+
+    if (event.creator.id !== user.id) {
+      throw new Error('You are not authorized to delete this event.');
+    }
+
+    return this.eventsService.remove(eventId);
+  }
+
+  @Mutation(() => Event)
+  @UseGuards(GqlJwtAuthGuard)
+  async updateEvent(
+    @Args('id', { type: () => Int }) id: number,
+    @Args('location') location: string,
+    @Args('date') date: string,
+    @Args('title') title: string,
+    @Args('description') description: string,
+    @CurrentUser() user: User,
+  ): Promise<Event> {
+    const event = await this.eventsService.findOne({
+      where: { id },
+      select: { creator: { id: true } },
+    });
+
+    if (event.creator.id !== user.id) {
+      throw new Error('You are not authorized to update this event.');
+    }
+
+    event.title = title;
+    event.description = description;
+    event.location = location;
+    event.date = date;
+
+    return this.eventsService.update(id, event);
   }
 }

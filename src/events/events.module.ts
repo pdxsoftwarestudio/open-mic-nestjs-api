@@ -8,6 +8,7 @@ import { EventsService } from './events.service';
 @Module({
   imports: [DatabaseModule],
   controllers: [EventsController],
+  exports: [EventsService],
   providers: [EventsService, EventsResolver, ...eventProviders],
 })
 export class EventsModule {}

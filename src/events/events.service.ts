@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { CreateEventInput } from './dto/create-event.input';
 import { UpdateEventInput } from './dto/update-event.input';
 import { Event } from './entities/event.entity';
@@ -12,15 +12,23 @@ export class EventsService {
   ) {}
 
   async create(createEventInput: CreateEventInput) {
-    return this.eventRepository.save(createEventInput);
+    return this.eventRepository.save({
+      ...createEventInput,
+      creator: {
+        id:
+          typeof createEventInput.creatorId === 'string'
+            ? parseInt(createEventInput.creatorId)
+            : createEventInput.creatorId,
+      },
+    });
   }
 
   async findAll() {
     return this.eventRepository.find();
   }
 
-  async findOne(id: number) {
-    return this.eventRepository.findOneBy({ id });
+  async findOne(options: FindOneOptions<Event>) {
+    return this.eventRepository.findOne(options);
   }
 
   async update(id: number, updateEventInput: UpdateEventInput) {
