@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { EventsModule } from './events/events.module';
 import { UsersModule } from './users/users.module';
+import { ParticipantsModule } from './participants/participant.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UsersModule } from './users/users.module';
     }),
     UsersModule,
     EventsModule,
+    ParticipantsModule,
     DatabaseModule,
     AuthModule,
   ],
